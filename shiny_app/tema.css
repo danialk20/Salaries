@@ -1,0 +1,114 @@
+/* tema.css */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
+/* Fondo de la página */
+body {
+  background-color: #f2f2f2;
+  font-family: 'Montserrat';
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Montserrat';
+  color: #555;
+  font-weight: bold;
+}
+
+p {
+  font-family: 'Montserrat';
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+#banner {
+  text-align: center;
+  background-color: #eee;
+  padding: 10px;
+}
+
+/* Make text visible on inputs */
+.shiny-input-container {
+  color: #474747;
+}
+
+
+
+/* Encabezado */
+.header {
+  background-color: #3498db;
+  color: #ffffff;
+  padding: 10px;
+  text-align: center;
+  font-size: 24px;
+}
+
+/* Barra de navegación */
+.navbar {
+  background-color: #333;
+  color: #ffffff;
+  padding: 10px;
+}
+
+/* Botones */
+.button {
+  background-color: #3498db;
+  color: #ffffff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: #2980b9;
+}
+
+/* Cuadros de texto */
+.text-input {
+  padding: 5px;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Tablas */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.table th {
+  background-color: #f2f2f2;
+}
+
+/* Gráficos */
+.plot-output {
+  width: 100%;
+}
+
+/* Pie de página */
+.footer {
+  background-color: #333;
+  color: #ffffff;
+  text-align: center;
+  padding: 10px;
+}
+
+/* Clases de colores personalizadas */
+.primary-text {
+  color: #3498db;
+}
+
+.success-text {
+  color: #27ae60;
+}
+
+.error-text {
+  color: #e74c3c;
+}
