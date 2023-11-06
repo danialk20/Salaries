@@ -16,10 +16,12 @@ Este repositorio tiene los elementos usados en el desarrollo de la aplicación w
 3. **Datos Procesados:**
    - El archivo `shiny_data.csv` representa nuestra versión curada del conjunto de datos después de aplicar el tratamiento descrito en el script `treatment_file.R`. Estos datos refinados se utilizan en nuestra aplicación Shiny para visualización y análisis interactivos.
 
+4. **Datos de apoyo:**
+   - El archivo `data_wc.csv` presenta los datos usados para la elaboración de la nube de palabras expuesta en la página principal de la aplicación web.
+
 ## Aplicación Shiny
 
-El repositorio incluye una aplicación Shiny, ubicada en el directorio `shiny_app`. La aplicación permite a los usuarios explorar de manera interactiva los datos, visualizar tendencias y patrones clave de los salarios y predecir un salario con base en las características.
-
+En el folder `shiny_app` se encontrarán los archivos `global.R`, `server.R` y `ui.R`, esenciales en la creación de la app shiny, y un archivo `tema.css`, en el que se definen algunas características estéticas de la misma.
 
 ## Colaboradores
 
