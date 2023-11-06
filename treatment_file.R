@@ -66,4 +66,3 @@ data <- subset(data, salary_in_usd <= lim_sup & salary_in_usd > lim_inf)
 names(data) <- c("Año", "Nivel de experiencia", "Tipo de contrato", "Rol", "Moneda de pago",
                  "Salario en USD", "Residencia del empleado", "Modalidad de trabajo",
                  "Ubicación de la empresa", "Tamaño de la compañía")
-
