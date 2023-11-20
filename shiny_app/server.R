@@ -272,6 +272,58 @@ function(input, output, session) {
     return(facet_plotly_)
   }
   
+  FChoropleth <- function(var_){
+    if (var_ == "ubicacion") {
+      dataexcel <- read_excel("mapa.xlsx", sheet = "ubicacionempresa")
+      PromSalarios <- aggregate(data0$salary_in_usd, by=list(data0$company_location), FUN=mean)
+      colnames(PromSalarios) <- c("Pais", "PromedioSalario")
+      Frecuencia <- data0 %>%
+        count(company_location)
+    } else if (var_ == "residencia") {
+      dataexcel <- read_excel("mapa.xlsx", sheet = "residenciaempleado")
+      PromSalarios <- aggregate(data0$salary_in_usd, by=list(data0$employee_residence), FUN=mean)
+      colnames(PromSalarios) <- c("Pais", "PromedioSalario")
+      Frecuencia <- data0 %>%
+        count(employee_residence)
+    } else {
+      dataexcel <- NULL
+    }
+    
+    dataexcel$PromediosSalarios <- PromSalarios$PromedioSalario
+    dataexcel$ObservacionesSalarios <- Frecuencia$n
+    DataMundo <- merge(DataMundo, dataexcel, by.x = "ISO2", by.y = "Codigo", all.x = TRUE) 
+    
+    Divisiones <- c(0, 20000, 35000, 50000, 65000, 80000, Inf)
+    Colores <- c('#FF616E', "#4ABF6B", "#FFA600", "#A5E580", "#FFDB4D", "#F9A9D5")
+    Paleta <- colorBin(palette = Colores, domain = DataMundo$PromediosSalarios, bins = Divisiones, na.color = "transparent")
+    
+    Texto <- paste(
+      "País: ", DataMundo$NombrePais,"<br/>", 
+      "Salario promedio (USD): ", DataMundo$PromediosSalarios
+    ) %>%
+      lapply(htmltools::HTML)
+    
+    leaflet(DataMundo) %>% 
+      addTiles()  %>% 
+      setView( lat=10, lng=0 , zoom=2) %>%
+      addPolygons( 
+        fillColor = ~Paleta(PromediosSalarios), 
+        stroke=TRUE, 
+        fillOpacity = 0.9, 
+        color="white", 
+        weight=0.3,
+        label = Texto,
+        labelOptions = labelOptions( 
+          style = list("font-weight" = "normal", padding = "3px 8px"), 
+          textsize = "13px", 
+          direction = "auto"
+        )
+      ) %>%
+      addLegend(pal=Paleta, values=~PromediosSalarios, opacity=0.9, title = "Salarios promedios", position = "bottomleft" )
+  }
+  
+  
+  
   # REACTIVE
   
   type_r <- reactive({
@@ -339,7 +391,13 @@ function(input, output, session) {
     var_
   })
   
-  
+  map_r <- reactive({
+    var_ <- input$var8
+    var_ <- switch(var_,
+                   "Residencia del empleado" = "residencia",
+                   "Ubicación de la empresa" = "ubicacion",)
+    FChoropleth(var_ = var_)
+  })
   
   # OBSERVE
   observe({
@@ -426,6 +484,11 @@ function(input, output, session) {
   # Facet wrap (barplot)
   output$facet <- renderPlotly({
     facet_plot_r()
+  })
+  
+  # Choroplet
+  output$mapa <- renderLeaflet({
+    map_r()
   })
   
   # Instrucciones univariado
