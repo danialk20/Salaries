@@ -113,7 +113,7 @@ function(input, output, session) {
       geom_density_ridges(alpha = 0.8, size=0.1) +
       theme_ridges() +
       labs(title = paste0("Salario según la variable ", tolower(var_)),
-                          x = "Salario en USD", y = var_) +
+           x = "Salario en USD", y = var_) +
       #theme_minimal() +
       theme(panel.background = element_rect(fill = "#F5F7F9", color = "lightgray"), 
             plot.title = element_text(hjust = 0.5, face = "bold", color="#555555"),
@@ -229,19 +229,19 @@ function(input, output, session) {
       ) %>%
       layout(polar = list(radialaxis = list(visible = TRUE, range = c(0, max(resultados$promedio_salary)),
                                             color = "#555555", tickfont = list(color = "#555555")
-                                            ),
-                          angularaxis = list(linecolor = "#555555")
-                          ),
-             title = list(text = "<b>Salarios por rol según el nivel de experiencia</b>", font = list(color = "#555555")),
-             showlegend = TRUE,
-             margin = list(l = 0, r = 0, b = 20, t = 60),
-             legend = list(x = 0.9, y = 0.5),
-             paper_bgcolor = "white",
-             plot_bgcolor = "#F5F7F9",
-             font = list(family = "Montserrat"))
+      ),
+      angularaxis = list(linecolor = "#555555")
+      ),
+      title = list(text = "<b>Salarios por rol según el nivel de experiencia</b>", font = list(color = "#555555")),
+      showlegend = TRUE,
+      margin = list(l = 0, r = 0, b = 20, t = 60),
+      legend = list(x = 0.9, y = 0.5),
+      paper_bgcolor = "white",
+      plot_bgcolor = "#F5F7F9",
+      font = list(family = "Montserrat"))
     
   }
-
+  
   FFacetPlot <- function(var_, var2_, data) {
     colores_ <- c('#FF616E', "#88D7D8", "#FFA600", "#A5E580", "#FFDB4D", "#F9A9D5", "#4ABF6B", "#C668A0")
     ncolores_ <- nrow(unique(data[, var_]))
@@ -308,10 +308,10 @@ function(input, output, session) {
       data_ <- data
     } else {
       data_ <- subset(data, data[[input$var5]] == input$var6)
-      if (input$var7 == "Máximo") {
+      if (input$var7 == "MC!ximo") {
         max_ <- max(data_$`Salario en USD`)
         data_ <- data_[data_$`Salario en USD` == max_, ]
-      } else if (input$var7 == "Mínimo") {
+      } else if (input$var7 == "MC-nimo") {
         min_ <- min(data_$`Salario en USD`)
         data_ <- data_[data_$`Salario en USD` == min_, ]
       }
@@ -326,19 +326,21 @@ function(input, output, session) {
   inputvar1 <- reactive({
     var_ <- input$var1
     var_ <- switch(var_,
-                   "Año" = "anio",
+                   "AC1o" = "anio",
                    "Nivel de experiencia" = "experiencia",
                    "Tipo de contrato" = "contrato",
                    "Rol" = "rol",
                    "Moneda de pago" = "moneda",
                    "Residencia del empleado" = "residencia",
                    "Modalidad de trabajo" = "modalidad",
-                   "Ubicación de la empresa" = "ubicacion",
-                   "Tamaño de la compañía" = "tamanio",
+                   "UbicaciC3n de la empresa" = "ubicacion",
+                   "TamaC1o de la compaC1C-a" = "tamanio",
     )
     var_
   })
   
+  
+    
   # OBSERVE
   observe({
     tab <- input$id_des
@@ -461,21 +463,71 @@ function(input, output, session) {
     txtinstrucciones$summary
   })
   
-  # Análisis univariado
+  # AnC!lisis univariado
   output$anaunivariado <- renderText({
     var_ <- inputvar1()
     txtunivariado[[var_]]
   })
   
-  # Análisis boxplot
+  # AnC!lisis boxplot
   output$anaboxplot <- renderText({
     var_ <- inputvar1()
     txtcategoria_box[[var_]]
   })
   
-  # Análisis joyplot
+  # AnC!lisis joyplot
   output$anajoyplot <- renderText({
     var_ <- inputvar1()
     txtcategoria_joy[[var_]]
   })
+  
+  # Predictive
+  
+  splitSlider <- reactive({
+    input$slidert / 100
+  })
+  
+  InputDataset_model <- reactive({
+    if (is.null(input$checkGroup)) {
+      dt <- data
+    }
+    else{
+      dt <- data[, c("Salario en USD", input$checkGroup)]
+    }
+  })
+
+  
+  set.seed(100)  # setting seed to reproduce results of random sampling
+  trainingRowIndex <-
+    reactive({
+      sample(1:nrow(InputDataset_model()),
+             splitSlider() * nrow(InputDataset_model()))
+    })# row indices for training data
+  
+  trainingData <- reactive({
+    tmptraindt <- InputDataset_model()
+    tmptraindt[trainingRowIndex(), ]
+  })
+  
+  testData <- reactive({
+    tmptestdt <- InputDataset_model()
+    tmptestdt[-trainingRowIndex(),]
+  })
+  
+  output$cntTrain <-
+    renderText(paste("Datos de entrenamiento:", NROW(trainingData())))
+  output$cntTest <-
+    renderText(paste("Datos de prueba:", NROW(testData())))
+  
+  Linear_Model <- reactive({
+    lm(as.formula(paste("`Salario en USD`","~.")), data = trainingData())
+  })
+  
+  output$Model <- renderPrint(summary(Linear_Model()))
+  
+  
+  
+  
+  
+  
 }
