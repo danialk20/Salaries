@@ -29,7 +29,7 @@ fluidPage(
         # Top section
         div(
           style = "flex: 1; padding: 10px; border-bottom: 1px solid #ccc;",
-          tags$p("La ciencia de datos es un campo de estudio que ha ganado importancia en los últimos aC1os. Los salarios de los profesionales en esta área dependen de factores inherentes al puesto de trabajo. Este proyecto presenta una aplicaciún Shiny desarrollada en R, que te permitirá explorar la relaciún entre algunas variables que afectan el salario de los profesionales; te presentamos la visualizaciún y el análisis descriptivo de los datos, así como la posibilidad de que predigas un salario a partir de la configuraciún de las demás variables. Usa esta aplicaciún como una herramienta para la toma de decisiones y planificaciún a nivel profesional. Si eres empresario, puedes guiarte para determinar el salario adecuado para un científico de datos. B!Bienvenidos! Esperamos te guste el Shiny."),
+          tags$p("La ciencia de datos es un campo de estudio que ha ganado importancia en los últimos años. Los salarios de los profesionales en esta área dependen de factores inherentes al puesto de trabajo. Este proyecto presenta una aplicación Shiny desarrollada en R, que te permitirá explorar la relación entre algunas variables que afectan el salario de los profesionales; te presentamos la visualización y el análisis descriptivo de los datos, así como la posibilidad de que predigas un salario a partir de la configuración de las demás variables. Usa esta aplicación como una herramienta para la toma de decisiones y planificación a nivel profesional. Si eres empresario, puedes guiarte para determinar el salario adecuado para un científico de datos. B!Bienvenidos! Esperamos te guste el Shiny."),
           div(
             style = "display: flex; justify-content: center;",
             wordcloud2Output("wordcloud", width = "4000px", height = "150px")
@@ -43,13 +43,13 @@ fluidPage(
           div(
             style = "flex: 1; padding: 10px; border-right: 1px solid #ccc;",
             tags$b("Objetivo:"),
-            tags$p("El propúsito de este proyecto es presentar un análisis descriptivo de los factores que afectan los salarios de los profesionales que trabajan en el campo de la Ciencia de datos, así como la informaciún más relevante de estas relaciones. Por otro lado, se busca predecir mediante modelos estadísticos los salarios de los profesionales en funciún de las variables encontradas.")
+            tags$p("El propósito de este proyecto es presentar un análisis descriptivo de los factores que afectan los salarios de los profesionales que trabajan en el campo de la Ciencia de datos, así como la información más relevante de estas relaciones. Por otro lado, se busca predecir mediante modelos estadísticos los salarios de los profesionales en función de las variables encontradas.")
           ),
           # Right bottom section
           div(
             style = "flex: 1; padding: 10px;",
             tags$b("Un poco sobre nosotras:"),
-            tags$p("B!Hola! somos un grupo de estudiantes de ingeniería industrial de la universidad de Antioquia, las cuales cursan actualmente su sexto semestre. Nos une la pasiún por la analítica, la innovaciún y el deseo de contribuir al ámbito académico. En busca de darle un valor agregado a nuestra educaciún, nace este proyecto, el cual pretende darle una herramienta a profesionales, estudiantes y empresarios para que conozcan un poco de este fascinante mundo de la ciencia de datos. Gracias por realizar este recorrido con nosotras.")
+            tags$p("B!Hola! somos un grupo de estudiantes de ingeniería industrial de la universidad de Antioquia, las cuales cursan actualmente su sexto semestre. Nos une la pasión por la analítica, la innovación y el deseo de contribuir al ámbito académico. En busca de darle un valor agregado a nuestra educación, nace este proyecto, el cual pretende darle una herramienta a profesionales, estudiantes y empresarios para que conozcan un poco de este fascinante mundo de la ciencia de datos. Gracias por realizar este recorrido con nosotras.")
           )
         )
       )
@@ -209,54 +209,59 @@ fluidPage(
           h2("side")
         ),
         mainPanel(tweaks,
-          fluidRow(style = "border: 1px solid lightgrey;",
-                   column(8, 
-                          list(tags$div(align = 'left', 
-                                   class = 'multicol',
-                                   h3("Variables de entrenamiento"),
-                                   p("Escoge las variables que quieras incluir en el modelo:"),
-                                   br(),
-                                   checkboxGroupInput("checkGroup",
-                                             choices = c2,
-                                             label = NULL,
-                                             selected = c2,
-                                             inline = TRUE))
-                               
-                          )),
-                   column(4, 
-                          sliderInput(
-                            "slidert",
-                            label = h3("Train/Test Split %"),
-                            min = 0,
-                            max = 100,
-                            value = 80),
-                          textOutput("cntTrain"),
-                          textOutput("cntTest"),
-                          br()
-                          )   
-          ),
-          fluidRow(style = "border: 1px solid lightgrey;",
-                   column(width = 8,
-                          withSpinner(verbatimTextOutput("Model")),
-                          title = "Model Summary"),
-                   column(width = 4, 
-                          titlePanel("My application"),
-                          fluidRow(
-                            column(5,
-                                   textInput("text1", "Enter something")     
-                            ),
-                            column(5,
-                                   textInput("text2", "Enter something else")     
-                            )
-                          ),
-                          fluidRow(
-                            column(3,
-                                   textInput("text3", "Enter another thing"),
-                                   offset = 9
-                            )
-                            ))),
-          fluidRow(style = "border: 4px double red;",
-                   numericInput("n", "n", 1))
+                  fluidRow(style = "border: 1px solid lightgrey;",
+                           column(8, 
+                                  list(tags$div(align = 'left', 
+                                                class = 'multicol',
+                                                h3("Variables de entrenamiento"),
+                                                p("Escoge las variables que quieras incluir en el modelo:"),
+                                                br(),
+                                                checkboxGroupInput("checkGroup",
+                                                                   choices = c2,
+                                                                   label = NULL,
+                                                                   selected = c2,
+                                                                   inline = TRUE))
+                                       
+                                  )),
+                           column(4, 
+                                  sliderInput(
+                                    "slidert",
+                                    label = h3("Train/Test Split %"),
+                                    min = 0,
+                                    max = 100,
+                                    value = 80),
+                                  textOutput("cntTrain"),
+                                  textOutput("cntTest"),
+                                  br()
+                           )   
+                  ),
+                  fluidRow(style = "border: 1px solid lightgrey;",
+                           column(
+                             width = 10,
+                             div(
+                               style = "border-bottom: 1px solid lightgrey; padding: 10px; overflow-y: auto; max-height: 400px; ",
+                               verbatimTextOutput("Model")
+                             ),
+                             title = "Model Summary"
+                           ),
+                           column(width = 4, 
+                                  titlePanel("My application"),
+                                  fluidRow(
+                                    column(5,
+                                           textInput("text1", "Enter something")     
+                                    ),
+                                    column(5,
+                                           textInput("text2", "Enter something else")     
+                                    )
+                                  ),
+                                  fluidRow(
+                                    column(3,
+                                           textInput("text3", "Enter another thing"),
+                                           offset = 9
+                                    )
+                                  ))),
+                  fluidRow(style = "border: 4px double red;",
+                           numericInput("n", "n", 1))
         )
       ),
       tags$head(
@@ -277,7 +282,7 @@ fluidPage(
     )
   )
 )
-      
+
 # fluidPage(
 #   fluidRow(
 #     column(
