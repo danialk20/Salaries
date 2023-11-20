@@ -54,7 +54,7 @@ fluidPage(
                sidebarPanel(width = 3,
                             h2("Análisis descriptivo."),
                             conditionalPanel(
-                              condition = "input.id_des == 'Análisis univariado' || (input.id_des == 'Análisis multivariado' & input.id_mul == 'Salarios por categoría')",
+                              condition = "input.id_des == 'Análisis univariado' || (input.id_des == 'Análisis multivariado' & input.id_mul == 'Salario según una variable')",
                               selectInput(inputId="var1",
                                           label="Seleccione una variable:",
                                           choices=c2,
@@ -70,13 +70,13 @@ fluidPage(
                                 textOutput("insunivariado")
                               ),
                               conditionalPanel(
-                                condition = "(input.id_des == 'Análisis multivariado' & input.id_mul == 'Salarios por categoría')",
+                                condition = "(input.id_des == 'Análisis multivariado' & input.id_mul == 'Salario según una variable')",
                                 textOutput("inscategoria")
                               )
                               # EXPLICACIÓN DE LA SECCIÓN
                             ),
                             conditionalPanel(
-                              condition = "input.id_mul == 'Facet' & input.id_des == 'Análisis multivariado'", #OJO AL CAMBIAR NOMBRE DEL PANEL
+                              condition = "input.id_mul == 'Salario según dos variables' & input.id_des == 'Análisis multivariado'", #OJO AL CAMBIAR NOMBRE DEL PANEL
                               selectInput(inputId="var3",
                                           label="Seleccione una variable:",
                                           choices=c2,
@@ -90,7 +90,7 @@ fluidPage(
                               # EXPLICACIÓN DE LA SECCIÓN
                             ),
                             conditionalPanel(
-                              condition = "input.id_dat == 'Data Frame' & input.id_des == 'Data'",
+                              condition = "input.id_dat == 'Base de datos' & input.id_des == 'Datos'",
                               selectInput(inputId="var5",
                                           label="Seleccione una variable:",
                                           choices=c("Ninguna", c2),
@@ -113,17 +113,17 @@ fluidPage(
                                   downloadButton('download',"Descarga los datos"))
                             ),
                             conditionalPanel(
-                              condition = "(input.id_des == 'Análisis multivariado' & input.id_mul == 'Spider')",
+                              condition = "(input.id_des == 'Análisis multivariado' & input.id_mul == 'Gráfico radar')",
                               div(style = "border-top: 1px solid rgba(85, 85, 85, 0.5); margin-top: 10px; margin-bottom: 10px;"),
                               textOutput("insspider")
                             ),
                             conditionalPanel(
-                              condition = "(input.id_des == 'Análisis multivariado' & input.id_mul == 'Choropleth')",
+                              condition = "(input.id_des == 'Análisis multivariado' & input.id_mul == 'Mapa coroplético')",
                               div(style = "border-top: 1px solid rgba(85, 85, 85, 0.5); margin-top: 10px; margin-bottom: 10px;"),
                               textOutput("insmapa")
                             ),
                             conditionalPanel(
-                              condition = "(input.id_des == 'Data' & input.id_dat == 'Summary')",
+                              condition = "(input.id_des == 'Datos' & input.id_dat == 'Resumen')",
                               div(style = "border-top: 1px solid rgba(85, 85, 85, 0.5); margin-top: 10px; margin-bottom: 10px;"),
                               textOutput("inssummary")
                             )
@@ -138,7 +138,7 @@ fluidPage(
                                               ),
                                      tabPanel(title="Análisis multivariado",
                                               tabsetPanel(id = "id_mul",
-                                                          tabPanel(title="Salarios por categoría",
+                                                          tabPanel(title="Salario según una variable",
                                                                    conditionalPanel(
                                                                      condition = "input.var2 == 'Joy Plot'",
                                                                      div(style = "padding: 10px;  background-color: white;",
@@ -154,19 +154,19 @@ fluidPage(
                                                                          textOutput("anaboxplot"))
                                                                      )
                                                                    ),
-                                                          tabPanel(title="Facet",
+                                                          tabPanel(title="Salario según dos variables",
                                                                    plotlyOutput("facet", height = "500px", width = "100%")),
-                                                          tabPanel(title="Spider",
+                                                          tabPanel(title="Gráfico radar",
                                                                    div(style = "padding: 20px;  background-color: white;",
                                                                      plotlyOutput("spider"))),
-                                                          tabPanel(title="Choropleth"))
+                                                          tabPanel(title="Mapa coroplético"))
                                      ),
-                                     tabPanel(title="Data", 
+                                     tabPanel(title="Datos", 
                                               tabsetPanel(id = "id_dat",
-                                                          tabPanel(title="Data Frame",
+                                                          tabPanel(title="Base de datos",
                                                                    div(style ="padding-top: 20px;",
                                                                        dataTableOutput("dataT"))),
-                                                          tabPanel(title="Summary", gt_output("summary"))
+                                                          tabPanel(title="Resumen", gt_output("summary"))
                                               )
                                      )
                          )

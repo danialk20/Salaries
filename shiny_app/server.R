@@ -393,7 +393,7 @@ function(input, output, session) {
       write.csv(data_dt(), fname)
     })
   
-  # Summary
+  # Resumen
   output$summary <- render_gt({
     as_gt(tbl_summary(data))
   })
