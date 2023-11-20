@@ -520,7 +520,7 @@ function(input, output, session) {
     renderText(paste("Datos de prueba:", NROW(testData())))
   
   Linear_Model <- reactive({
-    lm(as.formula(paste("`Salario en USD`","~.")), data = trainingData())
+    lm(`Salario en USD`~., data = trainingData())
   })
   
   output$Model <- renderPrint(summary(Linear_Model()))
