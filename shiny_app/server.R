@@ -272,7 +272,6 @@ function(input, output, session) {
     return(facet_plotly_)
   }
   
-  
   # REACTIVE
   
   type_r <- reactive({
@@ -305,16 +304,16 @@ function(input, output, session) {
   })
   
   data_dt <- reactive({
-    if (input$var5 == "Ninguna"){
+    if (input$var5 == "Ninguna") {
       data_ <- data
-    }else{
-      data_ <- subset(data, data[[input$var5]]==input$var6)
-      if(input$var7 == "Máximo"){
+    } else {
+      data_ <- subset(data, data[[input$var5]] == input$var6)
+      if (input$var7 == "Máximo") {
         max_ <- max(data_$`Salario en USD`)
-        data_ <- data_[data_$`Salario en USD` == max_,]
-      }else if(input$var7 == "Mínimo"){
+        data_ <- data_[data_$`Salario en USD` == max_, ]
+      } else if (input$var7 == "Mínimo") {
         min_ <- min(data_$`Salario en USD`)
-        data_ <- data_[data_$`Salario en USD` == min_,]
+        data_ <- data_[data_$`Salario en USD` == min_, ]
       }
     }
     data_
@@ -327,37 +326,35 @@ function(input, output, session) {
   inputvar1 <- reactive({
     var_ <- input$var1
     var_ <- switch(var_,
-           "Año" = "anio",
-           "Nivel de experiencia" = "experiencia",
-           "Tipo de contrato" = "contrato",
-           "Rol" = "rol",
-           "Moneda de pago" = "moneda",
-           "Residencia del empleado" = "residencia",
-           "Modalidad de trabajo" = "modalidad",
-           "Ubicación de la empresa" = "ubicacion",
-           "Tamaño de la compañía" = "tamanio",
+                   "Año" = "anio",
+                   "Nivel de experiencia" = "experiencia",
+                   "Tipo de contrato" = "contrato",
+                   "Rol" = "rol",
+                   "Moneda de pago" = "moneda",
+                   "Residencia del empleado" = "residencia",
+                   "Modalidad de trabajo" = "modalidad",
+                   "Ubicación de la empresa" = "ubicacion",
+                   "Tamaño de la compañía" = "tamanio",
     )
     var_
   })
-  
-  
-  
   
   # OBSERVE
   observe({
     tab <- input$id_des
     choices_ <- case_when(
       tab == "Análisis univariado" ~ c4,
-      tab == "Análisis multivariado" ~ c5)
+      tab == "Análisis multivariado" ~ c5
+    )
     updateRadioButtons(
       session = session,
       inputId = "var2",
       choices = choices_,
       selected = choices_[1],
-      inline = T
+      inline = TRUE
     )
     var3_ <- input$var3
-    c2_ <- c2[c2!=var3_]
+    c2_ <- c2[c2 != var3_]
     updateSelectInput(
       session = session,
       inputId = "var4",
@@ -366,7 +363,7 @@ function(input, output, session) {
     )
     c6_ <- unique(data[[input$var5]])
     updateSelectInput(
-      session = session, 
+      session = session,
       inputId = "var6",
       choices = c6_,
       selected = c6_[1]
@@ -381,17 +378,19 @@ function(input, output, session) {
   })
   
   # Datatable
-  #output$dataT <- renderDataTable(data)
   output$dataT <- renderDataTable({
     datatable_r()
   })
   
   # Download
   output$download <- downloadHandler(
-    filename = function(){"data.csv"}, 
-    content = function(fname){
+    filename = function() {
+      "data.csv"
+    },
+    content = function(fname) {
       write.csv(data_dt(), fname)
-    })
+    }
+  )
   
   # Resumen
   output$summary <- render_gt({
@@ -400,9 +399,9 @@ function(input, output, session) {
   
   # Pie or Bar
   output$piebar <- renderPlotly({
-    if (type_r()==TRUE){
-      plt_bar_chart_r()}
-    else{
+    if (type_r() == TRUE) {
+      plt_bar_chart_r()
+    } else {
       plt_pie_chart_r()
     }
   })
@@ -461,7 +460,7 @@ function(input, output, session) {
   output$inssummary <- renderText({
     txtinstrucciones$summary
   })
-
+  
   # Análisis univariado
   output$anaunivariado <- renderText({
     var_ <- inputvar1()
@@ -479,13 +478,4 @@ function(input, output, session) {
     var_ <- inputvar1()
     txtcategoria_joy[[var_]]
   })
-  
-  
 }
-
-
-
-
-
-
-

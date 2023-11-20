@@ -1,21 +1,18 @@
-#runApp("C:\\Users\\danii\\OneDrive - Universidad de Antioquia\\Escritorio\\Rday\\Rday directory\\SALARIES")
 #setwd("C:/Users/danii/OneDrive - Universidad de Antioquia/Escritorio/Rday/Rday directory/SALARIES")
-library(readr) #
-library(shiny) #
-library(shinythemes) #
-library(dplyr) #
-library(ggplot2) #
-library(ggtext) #
-library(plotly) #
+library(readr)
+library(shiny)
+library(shinythemes)
+library(dplyr)
+library(ggplot2)
+library(ggtext)
+library(plotly)
 library(ggridges)
-library(wordcloud2) #
-library(scales) # pa q los axis no se sobrepongan en los plots
-library(DT) # datatable
-library(gt) #gtsummary on shiny must be converted to a gt table
-library(gtsummary) #para summary elegante
-#nuevas
+library(wordcloud2)
+library(scales)
+library(DT)
+library(gt)
+library(gtsummary)
 library(rlang)
-#library(htmlwidgets) # ajustar el tamaño
 
 url1 <- "https://raw.githubusercontent.com/danialk20/Salarios_CD/main/shiny_data.csv"
 
@@ -70,7 +67,7 @@ txtunivariado$anio <- "La mayoría de las entradas en la base de datos correspon
 txtunivariado$experiencia <- "La mayor parte de los profesionales en ciencia de datos están clasificados con nivel de experiencia Senior, con 2473 observaciones que representan el 67% de los datos. Seguido de este nivel están los profesionales con un nivel de experiencia intermedio, con 800 observaciones que equivalen al 21.7%. En tercer lugar los profesionales principiantes (denominados comúnmente Junior), que solo representan el 8.6% con un total de 319 observaciones. Por último, con tan solo 100 observaciones (y un 2.7% de representación) se encuentran aquellos profesionales que se desempeñan en un cargo de nivel ejecutivo."
 txtunivariado$contrato <- "Pese a las tendencias de contratos donde se tiene la concepción de que los científicos de datos trabajan como independientes, los análisis evidencian que predominan los contratos a tiempo completo y que los tipos de contrato a medio tiempo, término fijo, o contrato de independientes no son tan comunes, pues estas tres categorías juntas representan aproximadamente 1%, con tan solo 36 observaciones."
 txtunivariado$rol <- "Hay una gran variedad de roles que son englobados por la ciencia de datos. Se presentan los más frecuentes y se destaca a los Ingenieros de datos con 1024 profesionales del total de la muestra, los cuales representan el 28%. Los Científicos de datos representan un 22 y los Analistas un 17%. Cabe resaltar que la categoría “Otro” tiene un número considerable de observaciones debido a que en ella están agrupados 86 roles que no fueron presentados de manera explícita como una sola categoría."
-txtunivariado$moneda <- "No es sorpresa que más del 85% de los profesionales en ciencia de datos reciban el pago de su salario en dólares estadounidenses, ya que esta es la moneda más popular en todo el mundo. Por la presencia de países europeos que se pudo apreciar tanto en el análisis de la residencia del profesional como de la ubicación de la empresa, es entendible la razón de que el euro y la libra esterlina hagan su aparición en el segundo y tercer puesto con 6.4% y 4.3% de los datos, respectivamente. Se destaca que solo 9 profesionales reciben su salario en dólar australiano (país que no está entre los más frecuentes de residencia del profesional o de ubicación de la empresa), lo que demuestra que hay un resaltable acuerdo por parte de los empleadores sobre la moneda de pago de los salarios."
+txtunivariado$moneda <- "No  es sorpresa que más del 85% de los profesionales en ciencia de datos reciban el pago de su salario en dólares estadounidenses, ya que esta es la moneda más popular en todo el mundo. Por la presencia de países europeos que se pudo apreciar tanto en el análisis de la residencia del profesional como de la ubicación de la empresa, es entendible la razón de que el euro y la libra esterlina hagan su aparición en el segundo y tercer puesto con 6.4% y 4.3% de los datos, respectivamente. Se destaca que solo 9 profesionales reciben su salario en dólar australiano (país que no está entre los más frecuentes de residencia del profesional o de ubicación de la empresa), lo que demuestra que hay un resaltable acuerdo por parte de los empleadores sobre la moneda de pago de los salarios."
 txtunivariado$residencia <- "Los científicos de datos se pueden encontrar en todo el mundo, sin embargo, se destaca el papel de Estados Unidos como referente para otros países. En cuanto a Europa, en Reino Unido residen 166, en España 80 y en Alemania 48, que es un 9.7% de los que se encuentran en América del norte. El continente asiático es uno de los que menor residencia de profesionales tiene, siendo India un 1% del total de la muestra. Estos datos son importantes, pues así se puede evidenciar la calidad formativa en cada país, la inversión y el apoyo al sector."
 txtunivariado$modalidad <- "Se puede evidenciar que, pese a las tendencias de trabajo remoto resultado de la pandemia, el trabajo presencial es de los más requeridos en el mercado (con un 51.2% de participación), pues a las empresas generalmente les gusta monitorear el trabajo de los profesionales y trabajar bajo conceptos de equipo más dinamizados en la presencialidad. Sin embargo, no sobra destacar que la modalidad remota, a pesar de ser una tendencia emergente, es notoriamente popular en el área. La modalidad híbrida o parcialmente remota es muy poco común, pues solo un 5% del total de los datos trabajó simultáneamente de manera remota y presencial."
 txtunivariado$ubicacion <- "Aunque un profesional en ciencia de datos trabaje de manera remota, parcialmente remota o presencial, la ubicación de la empresa empleadora puede cambiar. Estados Unidos se atribuye que aproximadamente el 80.7% profesionales están trabajando para alguna empresa radicada en el país (esto es, 2980 observaciones en la base de datos). Los países de Europa, a pesar de que están presentes, no destacan mucho, por lo que puede inferirse que las empresas europeas no son la prioridad a la hora de buscar un empleo en el área."
@@ -101,16 +98,9 @@ Se observa asimetría en los salarios tanto para la modalidad presencial como re
 txtcategoria_joy$ubicacion <- "La distribución de datos es asimétrica, siendo Estados Unidos la excepción con un valor promedio de 144000. Ningún país presenta una dispersión de salarios similar; Alemania muestra la mayor dispersión, seguido de Canadá, donde la mayoría de los datos se concentran en valores inferiores."
 txtcategoria_joy$tamanio <- "Se observan considerables variaciones en los salarios para todos los tamaños de empresas. No obstante, la dispersión es más simétrica en las empresas medianas y grandes. Las empresas pequeñas muestran alta asimetría, con valores alejados de la mayoría de los salarios, y una tendencia central de salarios en 61566. A pesar de los datos atípicos en la empresa de tamaño mediana, parece que los salarios de los profesionales que trabajan en este tipo de empresas se distribuyen de manera aproximadamente normal ."
 
-
+# texto spider
 txtspider <- "Se puede evidenciar el salario promedio de los científicos de datos dependiendo su rol y su experiencia. En el caso de los científicos de datos, su salario para el nivel ejecutivo es superior para los otros roles, sin embargo, no posee valores en el rol de investigador en este mismo nivel, pues no se encuentran estos profesionales con esa experiencia. En el nivel senior los valores de los salarios son muy similares con una media de 154484. En el nivel intermedio, los arquitectos de datos tienen el mejor salario con un valor de 149.714, muy por encima de la media. No existen científicos de datos en el nivel junior. Por otro lado, el ingeniero de análisis junior supera el sueldo del nivel intermedio para el mismo rol, pero para los otros roles el nivel intermedio sigue siendo el predominante con respecto al nivel junior."
 
-
-
-# datasetInput1 <- reactive({
-#   switch(input$dataset1,
-#          "Sepal Length" = "Sepal.Length",
-#          "Sepal Width" = "Sepal.Width")
-# })
 
 # textos análisis multivariado, face
 
