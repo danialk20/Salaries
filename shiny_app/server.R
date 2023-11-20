@@ -308,10 +308,10 @@ function(input, output, session) {
       data_ <- data
     } else {
       data_ <- subset(data, data[[input$var5]] == input$var6)
-      if (input$var7 == "MC!ximo") {
+      if (input$var7 == "Máximo") {
         max_ <- max(data_$`Salario en USD`)
         data_ <- data_[data_$`Salario en USD` == max_, ]
-      } else if (input$var7 == "MC-nimo") {
+      } else if (input$var7 == "Mínimo") {
         min_ <- min(data_$`Salario en USD`)
         data_ <- data_[data_$`Salario en USD` == min_, ]
       }
@@ -326,21 +326,21 @@ function(input, output, session) {
   inputvar1 <- reactive({
     var_ <- input$var1
     var_ <- switch(var_,
-                   "AC1o" = "anio",
+                   "Año" = "anio",
                    "Nivel de experiencia" = "experiencia",
                    "Tipo de contrato" = "contrato",
                    "Rol" = "rol",
                    "Moneda de pago" = "moneda",
                    "Residencia del empleado" = "residencia",
                    "Modalidad de trabajo" = "modalidad",
-                   "UbicaciC3n de la empresa" = "ubicacion",
-                   "TamaC1o de la compaC1C-a" = "tamanio",
+                   "Ubicación de la empresa" = "ubicacion",
+                   "Tamaño de la compañía" = "tamanio",
     )
     var_
   })
   
   
-    
+  
   # OBSERVE
   observe({
     tab <- input$id_des
@@ -463,19 +463,19 @@ function(input, output, session) {
     txtinstrucciones$summary
   })
   
-  # AnC!lisis univariado
+  # Análisis univariado
   output$anaunivariado <- renderText({
     var_ <- inputvar1()
     txtunivariado[[var_]]
   })
   
-  # AnC!lisis boxplot
+  # Análisis boxplot
   output$anaboxplot <- renderText({
     var_ <- inputvar1()
     txtcategoria_box[[var_]]
   })
   
-  # AnC!lisis joyplot
+  # Análisis joyplot
   output$anajoyplot <- renderText({
     var_ <- inputvar1()
     txtcategoria_joy[[var_]]
@@ -495,7 +495,7 @@ function(input, output, session) {
       dt <- data[, c("Salario en USD", input$checkGroup)]
     }
   })
-
+  
   
   set.seed(100)  # setting seed to reproduce results of random sampling
   trainingRowIndex <-
