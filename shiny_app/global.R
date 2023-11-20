@@ -14,14 +14,20 @@ library(gt)
 library(gtsummary)
 library(rlang)
 
-url1 <- "https://raw.githubusercontent.com/danialk20/Salarios_CD/main/shiny_data.csv"
+url0 <- "https://raw.githubusercontent.com/danialk20/Salarios_CD/main/original_data.csv"
+data0 <- read_csv(url0, show_col_types = FALSE)
+DataMundo <- st_read("TM_WORLD_BORDERS_SIMPL-0.3.shp")
+colF <- c("work_year", "experience_level", "employment_type", "job_title", "salary_currency", "employee_residence", "company_location", "company_size", "remote_ratio")
+data0[colF] <- lapply(data0[colF], as.factor)
+colN <- c("salary", "salary_in_usd")
+data0[colN] <- lapply(data0[colN], as.numeric)
 
+url1 <- "https://raw.githubusercontent.com/danialk20/Salarios_CD/main/shiny_data.csv"
 data <- read_csv(url1, show_col_types = FALSE) %>%
   mutate(across(c(where(is.character), "Año"), as.factor))
 
 
 url2 <- "https://raw.githubusercontent.com/danialk20/Salarios_CD/main/data_wc.csv"
-
 data_wc <- read_csv(url2, show_col_types = FALSE) %>%
   mutate(across(everything(), as.factor))
 
@@ -50,6 +56,11 @@ c6 <- c("2020","2021","2022","2023")
 
 # filtro data
 c7 <- c("Todos", "Máximo", "Mínimo")
+
+# mapa
+c8 <- data %>%
+  select(c(7,9)) %>%
+  names()
 
 # textos instrucciones
 txtinstrucciones <- list()
