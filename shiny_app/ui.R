@@ -127,6 +127,10 @@ fluidPage(
           ),
           conditionalPanel(
             condition = "(input.id_des == 'Análisis multivariado' & input.id_mul == 'Mapa coroplético')",
+            selectInput(inputId = "var8",
+                        label = "Seleccione una variable:",
+                        choices = c8,
+                        selected = c8[1]),
             div(style = "border-top: 1px solid rgba(85, 85, 85, 0.5); margin-top: 10px; margin-bottom: 10px;"),
             textOutput("insmapa")
           ),
@@ -178,7 +182,8 @@ fluidPage(
                       withSpinner(plotlyOutput("spider")))
                 ),
                 tabPanel(
-                  title = "Mapa coroplético"
+                  title = "Mapa coroplético",
+                  leafletOutput("mapa")
                 )
               )
             ),
