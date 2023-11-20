@@ -1,7 +1,7 @@
-#setwd("C:/Users/danii/OneDrive - Universidad de Antioquia/Escritorio/Rday/Rday directory/SALARIES")
 library(readr)
 library(shiny)
 library(shinythemes)
+library(shinycssloaders)
 library(dplyr)
 library(ggplot2)
 library(ggtext)
