@@ -13,6 +13,17 @@ library(DT)
 library(gt)
 library(gtsummary)
 library(rlang)
+library(leaflet)
+library(sf)
+library(readxl)
+library(car)
+library(jtools)
+library(tseries)
+library(goftest)
+library(lmtest)
+library(Metrics)
+
+DataMundo <- st_read("/vsicurl/https://github.com/EsteffanyP/RDay/raw/main/TM_WORLD_BORDERS_SIMPL-0.3.shp")
 
 url0 <- "https://raw.githubusercontent.com/danialk20/Salarios_CD/main/original_data.csv"
 data0 <- read_csv(url0, show_col_types = FALSE)
@@ -62,13 +73,15 @@ c8 <- data %>%
   select(c(7,9)) %>%
   names()
 
+# normalidad
+
 # textos instrucciones
 txtinstrucciones <- list()
 txtinstrucciones$univariado <- "En el panel izquierdo puedes elegir una variable y el tipo de gráfico que deseas visualizar. En la sección central, verás las gráficas seleccionadas junto con su análisis correspondiente. Recuerda que aquí se analiza una sola variable, es decir, se aprecia la distribución de los datos con base en los niveles de la variable elegida."
 txtinstrucciones$categoria <- "En esta sección podrás analizar el salario promedio de los profesionales en ciencia de datos con respecto a los niveles de otra variable. En el panel izquierdo puedes elegir la variable con la que deseas comparar los salarios y seleccionar el tipo de gráfico de tu preferencia. En la sección central encontrarás las gráficas seleccionadas con su respectivo análisis."
 txtinstrucciones$facet <- "En la parte izquierda encontrarás un panel donde podrás seleccionar las dos variables con la que va a ser comparado el salario. En la parte central aparecerán la gráfica con su respectivo análisis. En este análisis podrás observar el salario promedio para combinaciones de los niveles de dos variables."
 txtinstrucciones$spider <- "Esta gráfica interactiva en forma de telaraña permite analizar los promedios con relación al rol que desempeña el profesional y el nivel de experiencia."
-txtinstrucciones$mapa <- "acá saldrán las instrucciones para mapa"
+txtinstrucciones$mapa <- "En esta pestaña puedes observar un mapa coroplético que representa el salario promedio según la residencia del profesional en ciencia de datos o de la ubicación de la empresa en la que trabaja"
 txtinstrucciones$datatable <- "Aquí puedes interactuar con la base de datos usada. Puedes filtrarla para obtener las observaciones según el nivel de alguna variable y visualizar el salario máximo o mínimo. Los datos proyectados pueden ser descargados en cualquier momento."
 txtinstrucciones$summary <- "A continuación un resumen de la base de datos donde podrás observar la distribución de las entradas de la base de datos por variable y por nivel"
 
@@ -102,16 +115,13 @@ txtcategoria_joy$experiencia <- "Ningún conjunto de salarios agrupado por nivel
 txtcategoria_joy$contrato <- "Únicamente se distribuye de forma simétrica los valores de los salarios de los trabajadores de tiempo completo, con una media que sobrepasa los 120000 dólares; sin embargo, es la distribución con más variabilidad si no se toma en cuenta el dato atípico presente en el conjunto de salarios de empleados a término fijo. Para los tipos de contratos restantes los salarios más comunes no sobrepasan los 50000 dólares a excepción de otro gran grupo de datos cercanos a 100000 dólares para el caso de contratos de término fijo."
 txtcategoria_joy$rol <- "A excepción de los roles específicos de Analítico de Datos e Ingeniero de datos, las distribuciones de salarios para los puestos de trabajo considerados en la base de datos no se distribuyen simétricamente. Es común observar salarios alrededor de 150000 dólares en todos los roles, a excepción de Analista de datos, cuyo valor en ese caso es de poco más de 100000 dólares."
 txtcategoria_joy$moneda <- "El valor de los salarios en dólares americanos se distribuye de manera simétrica, con una media aproximada de 140000. Por lo general, se observan salarios relativamente bajos en rupias indias y otras monedas, con ingresos inferiores a 100000 para todas las monedas, excluyendo el dólar americano."
-txtcategoria_joy$residencia <- "
-Se evidencian distribuciones altamente asimétricas para los salarios en cada país. Estados Unidos destaca por su relativa simetría, con algunas variaciones. La mayoría de los salarios se concentran en el rango de 0 a 200,000 aproximadamente. En el caso de India, Alemania y España, los salarios promedio varían entre 20000 y 100000."
-txtcategoria_joy$modalidad <- "
-Se observa asimetría en los salarios tanto para la modalidad presencial como remota, aunque con presencia de datos atípicos. En el caso de trabajos parcialmente remotos, la media salarial está descentralizada, es decir, los salarios para esta modalidad se concentran en los valores más inferiores"
+txtcategoria_joy$residencia <- "Se evidencian distribuciones altamente asimétricas para los salarios en cada país. Estados Unidos destaca por su relativa simetría, con algunas variaciones. La mayoría de los salarios se concentran en el rango de 0 a 200,000 aproximadamente. En el caso de India, Alemania y España, los salarios promedio varían entre 20000 y 100000."
+txtcategoria_joy$modalidad <- "Se observa asimetría en los salarios tanto para la modalidad presencial como remota, aunque con presencia de datos atípicos. En el caso de trabajos parcialmente remotos, la media salarial está descentralizada, es decir, los salarios para esta modalidad se concentran en los valores más inferiores"
 txtcategoria_joy$ubicacion <- "La distribución de datos es asimétrica, siendo Estados Unidos la excepción con un valor promedio de 144000. Ningún país presenta una dispersión de salarios similar; Alemania muestra la mayor dispersión, seguido de Canadá, donde la mayoría de los datos se concentran en valores inferiores."
 txtcategoria_joy$tamanio <- "Se observan considerables variaciones en los salarios para todos los tamaños de empresas. No obstante, la dispersión es más simétrica en las empresas medianas y grandes. Las empresas pequeñas muestran alta asimetría, con valores alejados de la mayoría de los salarios, y una tendencia central de salarios en 61566. A pesar de los datos atípicos en la empresa de tamaño mediana, parece que los salarios de los profesionales que trabajan en este tipo de empresas se distribuyen de manera aproximadamente normal ."
 
 # texto spider
-txtspider <- "Se puede evidenciar el salario promedio de los científicos de datos dependiendo su rol y su experiencia. En el caso de los científicos de datos, su salario para el nivel ejecutivo es superior para los otros roles, sin embargo, no posee valores en el rol de investigador en este mismo nivel, pues no se encuentran estos profesionales con esa experiencia. En el nivel senior los valores de los salarios son muy similares con una media de 154484. En el nivel intermedio, los arquitectos de datos tienen el mejor salario con un valor de 149.714, muy por encima de la media. No existen científicos de datos en el nivel junior. Por otro lado, el ingeniero de análisis junior supera el sueldo del nivel intermedio para el mismo rol, pero para los otros roles el nivel intermedio sigue siendo el predominante con respecto al nivel junior."
-
+txtspider <- "Los salarios de los científicos de datos varían según su rol y experiencia. En el nivel ejecutivo, los científicos de datos tienen el salario más alto, superando a otros roles. Sin embargo, no hay valores para el rol de investigador en este nivel. En el nivel senior, los salarios son similares, con una media de 154484. En el nivel intermedio, los arquitectos de datos lideran con un salario de 149714, considerablemente por encima de la media. No hay científicos de datos en el nivel junior. El ingeniero de análisis junior supera el sueldo del nivel intermedio para el mismo rol, pero en otros roles, el nivel intermedio sigue siendo predominante respecto al nivel junior."
 
 # textos análisis multivariado, face
 

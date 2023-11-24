@@ -29,7 +29,7 @@ fluidPage(
         # Top section
         div(
           style = "flex: 1; padding: 10px; border-bottom: 1px solid #ccc;",
-          tags$p("La ciencia de datos es un campo de estudio que ha ganado importancia en los últimos años. Los salarios de los profesionales en esta área dependen de factores inherentes al puesto de trabajo. Este proyecto presenta una aplicación Shiny desarrollada en R, que te permitirá explorar la relación entre algunas variables que afectan el salario de los profesionales; te presentamos la visualización y el análisis descriptivo de los datos, así como la posibilidad de que predigas un salario a partir de la configuración de las demás variables. Usa esta aplicación como una herramienta para la toma de decisiones y planificación a nivel profesional. Si eres empresario, puedes guiarte para determinar el salario adecuado para un científico de datos. B!Bienvenidos! Esperamos te guste el Shiny."),
+          tags$p("La ciencia de datos es un campo de estudio que ha ganado importancia en los últimos años. Los salarios de los profesionales en esta área dependen de factores inherentes al puesto de trabajo. Este proyecto presenta una aplicación Shiny desarrollada en R, que te permitirá explorar la relación entre algunas variables que afectan el salario de los profesionales; te presentamos la visualización y el análisis descriptivo de los datos, así como la posibilidad de que predigas un salario a partir de la configuración de las demás variables. Usa esta aplicación como una herramienta para la toma de decisiones y planificación a nivel profesional. Si eres empresario, puedes guiarte para determinar el salario adecuado para un científico de datos. ¡Bienvenidos! Esperamos te guste el Shiny."),
           div(
             style = "display: flex; justify-content: center;",
             wordcloud2Output("wordcloud", width = "4000px", height = "150px")
@@ -49,7 +49,7 @@ fluidPage(
           div(
             style = "flex: 1; padding: 10px;",
             tags$b("Un poco sobre nosotras:"),
-            tags$p("B!Hola! somos un grupo de estudiantes de ingeniería industrial de la universidad de Antioquia, las cuales cursan actualmente su sexto semestre. Nos une la pasión por la analítica, la innovación y el deseo de contribuir al ámbito académico. En busca de darle un valor agregado a nuestra educación, nace este proyecto, el cual pretende darle una herramienta a profesionales, estudiantes y empresarios para que conozcan un poco de este fascinante mundo de la ciencia de datos. Gracias por realizar este recorrido con nosotras.")
+            tags$p("¡Hola! somos un grupo de estudiantes de ingeniería industrial de la universidad de Antioquia, las cuales cursan actualmente su sexto semestre. Nos une la pasión por la analítica, la innovación y el deseo de contribuir al ámbito académico. En busca de darle un valor agregado a nuestra educación, nace este proyecto, el cual pretende darle una herramienta a profesionales, estudiantes y empresarios para que conozcan un poco de este fascinante mundo de la ciencia de datos. Gracias por realizar este recorrido con nosotras.")
           )
         )
       )
@@ -179,11 +179,14 @@ fluidPage(
                 tabPanel(
                   title = "Gráfico radar",
                   div(style = "padding: 20px;  background-color: white;",
-                      withSpinner(plotlyOutput("spider")))
+                      withSpinner(plotlyOutput("spider"))),
+                  div(style = "padding: 20px;  background-color: white; margin-top: 10px;",
+                      textOutput("anaspider"))
                 ),
                 tabPanel(
                   title = "Mapa coroplético",
-                  leafletOutput("mapa")
+                  withSpinner(leafletOutput("mapa")),
+                  div(style = "border-top: 0px solid rgba(85, 85, 85, 0.5); margin-top: 10px; margin-bottom: 20px;"),
                 )
               )
             ),
@@ -211,11 +214,14 @@ fluidPage(
       sidebarLayout(
         sidebarPanel(
           width = 3,
-          h2("side")
+          h2("Modelo predictivo"),
+          p("En esta pestaña podrás entrenar un modelo de regresión lineal múltiple."),
+          p("Elige las variables regresoras que quieras incluir y el porcentaje de datos que quieres usar para entrenar el modelo."),
+          p("Podrás ver el resumen del modelo entrenado y las pruebas de los supuestos del modelo de manera gráfica y estadística.")
         ),
         mainPanel(tweaks,
                   fluidRow(style = "border: 1px solid lightgrey;",
-                           column(8, 
+                           column(8,
                                   list(tags$div(align = 'left', 
                                                 class = 'multicol',
                                                 h3("Variables de entrenamiento"),
@@ -231,8 +237,8 @@ fluidPage(
                            column(4, 
                                   sliderInput(
                                     "slidert",
-                                    label = h3("Train/Test Split %"),
-                                    min = 0,
+                                    label = h3("% Entrenamiento/ Prueba del modelo"),
+                                    min = 35,
                                     max = 100,
                                     value = 80),
                                   textOutput("cntTrain"),
@@ -241,32 +247,61 @@ fluidPage(
                            )   
                   ),
                   fluidRow(style = "border: 1px solid lightgrey;",
-                           column(
-                             width = 10,
-                             div(
-                               style = "border-bottom: 1px solid lightgrey; padding: 10px; overflow-y: auto; max-height: 400px; ",
-                               verbatimTextOutput("Model")
-                             ),
-                             title = "Model Summary"
-                           ),
-                           column(width = 4, 
-                                  titlePanel("My application"),
-                                  fluidRow(
-                                    column(5,
-                                           textInput("text1", "Enter something")     
-                                    ),
-                                    column(5,
-                                           textInput("text2", "Enter something else")     
+                           column(8
+                                  ), # ACÁ IRAN LAS OPCIONES PARA PREDECIR
+                           column(4, titlePanel("Medidas de desempeño"),
+                                  verbatimTextOutput("medidas")
+                                  ) # ACÁ LAS MEDIDAS DE DESEMPEÑO
+                           ), 
+                  fluidRow(style = "border: 1px solid lightgrey;",
+                           column(6,
+                                  titlePanel("Resumen del modelo"),
+                                  div(
+                                    style = "border-bottom: 1px solid lightgrey; padding: 10px; overflow-y: auto; overflow-x: auto; max-height: 700px; ",
+                                    verbatimTextOutput("Model")
+                                  )),
+                           column(6,
+                                  titlePanel("Supuestos"),
+                                  div(
+                                    style = "border-bottom: 1px solid lightgrey; padding: 10px; overflow-y: auto; overflow-x: auto; max-height: 1000px; ",
+                                    tabsetPanel(id="id_sup",
+                                                tabPanel(title = "Normalidad",
+                                                         radioButtons(inputId = "varn",
+                                                                      label = NULL,
+                                                                      choices = c("Histograma", "Cuantil-cuantil", "Boxplot"),
+                                                                      selected = "Histograma",
+                                                                      inline = TRUE),
+                                                         plotOutput("normalidad"),
+                                                         radioButtons(inputId = "varns",
+                                                                      label = NULL,
+                                                                      choices = c("Shapiro-Wilk", "Jarque Bera", "Anderson-Darling"),
+                                                                      selected = "Shapiro-Wilk",
+                                                                      inline = TRUE),
+                                                         verbatimTextOutput("normalidads")),
+                                                tabPanel(title = "Homocedasticidad",
+                                                         plotOutput("homocedasticidad"),
+                                                         radioButtons(inputId = "varhs",
+                                                                      label = NULL,
+                                                                      choices = c("Breusch-Pagan", "Goldfeld-Quandt"),
+                                                                      selected = "Breusch-Pagan",
+                                                                      inline = TRUE),
+                                                         verbatimTextOutput("homocedasticidads")),
+                                                tabPanel(title = "Independencia",
+                                                         radioButtons(inputId = "vari",
+                                                                      label = NULL,
+                                                                      choices = c("Plot", "ACF", "PACF"),
+                                                                      selected = "Plot",
+                                                                      inline = TRUE),
+                                                         plotOutput("independencia"),
+                                                         radioButtons(inputId = "varis",
+                                                                      label = NULL,
+                                                                      choices = c("Breusch-Godfrey", "Durbin-Watson"),
+                                                                      selected = "Breusch-Godfrey",
+                                                                      inline = TRUE),
+                                                         verbatimTextOutput("independencias"))
                                     )
-                                  ),
-                                  fluidRow(
-                                    column(3,
-                                           textInput("text3", "Enter another thing"),
-                                           offset = 9
-                                    )
-                                  ))),
-                  fluidRow(style = "border: 4px double red;",
-                           numericInput("n", "n", 1))
+                                  ))
+                           )
         )
       ),
       tags$head(

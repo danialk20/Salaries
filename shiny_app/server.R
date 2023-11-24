@@ -109,7 +109,7 @@ function(input, output, session) {
     varS_ <- sym(var_)
     colores_ <- c('#FF616E', "#88D7D8", "#FFA600", "#A5E580", "#FFDB4D", "#F9A9D5", "#4ABF6B", "#C668A0")
     ncolores_ <- nrow(unique(data_))
-    joyplot_ <- ggplot(data, aes(x = `Salario en USD`, y = !!varS_, fill = !!varS_,, color = !!varS_)) +
+    joyplot_ <- ggplot(data, aes(x = `Salario en USD`, y = !!varS_, fill = !!varS_, color = !!varS_)) +
       geom_density_ridges(alpha = 0.8, size=0.1) +
       theme_ridges() +
       labs(title = paste0("Salario según la variable ", tolower(var_)),
@@ -251,7 +251,7 @@ function(input, output, session) {
                                       fill = !!varS_, color = !!varS_)) +
       geom_bar(stat = "summary", fun = "mean") +
       facet_wrap(var2S_) +
-      labs(title = paste0("Salarios según las variables x y ", tolower(var_)),
+      labs(title = paste0("Salarios según las variables", tolower(var_), " y ", tolower(var2_)),
            fill = var_,
            x = var_, y = "Salario en USD") +
       theme(panel.background = element_rect(fill = "#F5F7F9", color = "lightgray"), 
@@ -294,12 +294,12 @@ function(input, output, session) {
     DataMundo <- merge(DataMundo, dataexcel, by.x = "ISO2", by.y = "Codigo", all.x = TRUE) 
     
     Divisiones <- c(0, 20000, 35000, 50000, 65000, 80000, Inf)
-    Colores <- c('#FF616E', "#4ABF6B", "#FFA600", "#A5E580", "#FFDB4D", "#F9A9D5")
+    Colores <- c('#F9A9D5', "#FFDB4D", "#A5E580", "#4ABF6B", "#FFA600", "#FF616E")
     Paleta <- colorBin(palette = Colores, domain = DataMundo$PromediosSalarios, bins = Divisiones, na.color = "transparent")
     
     Texto <- paste(
-      "País: ", DataMundo$NombrePais,"<br/>", 
-      "Salario promedio (USD): ", DataMundo$PromediosSalarios
+      "País: ", DataMundo$NAME,"<br/>", 
+      "Salario promedio (USD): ", round(DataMundo$PromediosSalarios)
     ) %>%
       lapply(htmltools::HTML)
     
@@ -386,7 +386,7 @@ function(input, output, session) {
                    "Residencia del empleado" = "residencia",
                    "Modalidad de trabajo" = "modalidad",
                    "Ubicación de la empresa" = "ubicacion",
-                   "Tamaño de la compañía" = "tamanio",
+                   "Tamaño de la compañía" = "tamanio"
     )
     var_
   })
@@ -395,7 +395,7 @@ function(input, output, session) {
     var_ <- input$var8
     var_ <- switch(var_,
                    "Residencia del empleado" = "residencia",
-                   "Ubicación de la empresa" = "ubicacion",)
+                   "Ubicación de la empresa" = "ubicacion")
     FChoropleth(var_ = var_)
   })
   
@@ -544,6 +544,12 @@ function(input, output, session) {
     txtcategoria_joy[[var_]]
   })
   
+  # Análisis spider
+  output$anaspider <- renderText({
+    txtspider
+  })
+  
+  
   # Predictive
   
   splitSlider <- reactive({
@@ -586,11 +592,138 @@ function(input, output, session) {
     lm(`Salario en USD`~., data = trainingData())
   })
   
-  output$Model <- renderPrint(summary(Linear_Model()))
+  output$Model <- renderPrint(summ(Linear_Model(), digits = 2, vifs=TRUE))
   
+  residuales <- reactive({
+    Linear_Model()$residuals
+  })
   
+  #normalidad
+  type_n <- reactive({
+    if (input$varn == "Histograma"){
+      x = 1
+    }else if(input$varn == "Cuantil-cuantil"){
+      x = 2
+    }else{
+      x = 3
+    }
+    x
+  })
+  output$normalidad <- renderPlot({
+    if (type_n() == 1){
+      hist(residuales())
+    }else if(type_n() == 2){
+      qqPlot(residuales())
+    }
+    else{
+      boxplot(residuales())
+    }
+  })
+  type_ns <- reactive({
+    if (input$varns == "Shapiro-Wilk"){
+      x = 1
+    }else if(input$varns == "Jarque Bera"){
+      x = 2
+    }else{
+      x = 3
+    }
+    x
+  })
+  output$normalidads <- renderPrint({
+    if (type_ns() == 1){
+      shapiro.test(residuales())
+    }else if(type_ns() == 2){
+      jarque.bera.test(residuales())
+    }
+    else{
+      ad.test(residuales())
+    }
+  })
+   type_ns <- reactive({
+    if (input$varns == "Shapiro-Wilk"){
+      x = 1
+    }else if(input$varns == "Jarque Bera"){
+      x = 2
+    }else{
+      x = 3
+    }
+    x
+  })
+  output$normalidads <- renderPrint({
+    if (type_ns() == 1){
+      shapiro.test(residuales())
+    }else if(type_ns() == 2){
+      jarque.bera.test(residuales())
+    }
+    else{
+      ad.test(residuales())
+    }
+  })
   
-  
-  
+  # homocedasticidad
+  fitted <- reactive({
+    Linear_Model()$fitted.values
+  })
+  output$homocedasticidad <- renderPlot({
+      plot(fitted(),residuales())
+  })
+  type_hs <- reactive({
+    x = (input$varhs == "Breusch-Pagan")
+    x
+  })
+  output$homocedasticidads <- renderPrint({
+    if (type_hs() == TRUE){
+      bptest(Linear_Model())
+    }else{
+      gqtest(Linear_Model())
+    }
+  })
+  # independencia
+  type_i <- reactive({
+    if (input$vari == "Plot"){
+      x = 1
+    }else if(input$vari == "ACF"){
+      x = 2
+    }else{
+      x = 3
+    }
+    x
+  })
+  output$independencia <- renderPlot({
+    if(type_i() == 1){
+      plot(residuales())
+    }else if(type_i() == 2){
+      acf(residuales())
+    }else{
+      pacf(residuales())
+    }
+  })
+  type_is <- reactive({
+    x = (input$varis == "Breusch-Godfrey")
+    x
+  })
+  output$independencias <- renderPrint({
+    if (type_is() == TRUE){
+      bgtest(Linear_Model())
+    }else{
+      dwtest(Linear_Model())
+    }
+  })
+  med <- reactive({
+    input$medida
+  })
+  output$medidas <- renderPrint({
+    if (med() == "Entrenamiento"){
+      m1 <- mape(trainingData()$`Salario en USD`, Linear_Model()$fitted.values)*100
+      m2 <- rmse(trainingData()$`Salario en USD`, Linear_Model()$fitted.values)
+      m3 <- mae(trainingData()$`Salario en USD`, Linear_Model()$fitted.values)
+      m4 <- AIC(Linear_Model())
+      m5 <- BIC(Linear_Model())
+      m_ <- cat("MAPE: ", m1, "\nRMSE: ", m2, "\nMAE: ", m3, "\nAIC: ", m4, "\nBIC: ", m5, sep = "")
+    }
+    
+
+    m_
+  })
   
 }
